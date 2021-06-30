@@ -3,17 +3,16 @@ package org.wmock;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import static io.restassured.RestAssured.*;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class WireMockApiTests
 {
     WireMockServer wireMockServer;
 
-    @BeforeEach
+    @BeforeAll
     void initWireMock(){
         wireMockServer = new WireMockServer(8080);
         wireMockServer.start();
@@ -31,9 +30,29 @@ public class WireMockApiTests
                         .withBody("{ \"id\": 1, \"name\": \"Prashanth Sams\", \"gender\": \"male\", \"age\": 31 }, { \"id\": 2, \"name\": \"John Smith\", \"gender\": \"male\", \"age\": 40 }")
                 )
         );
+
+        stubFor(get(urlEqualTo("/users/1"))
+                .inScenario("getFirstUser")
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{ \"id\": 1, \"name\": \"Prashanth Sams\", \"gender\": \"male\", \"age\": 31 }")
+                )
+        );
+
+        stubFor(get(urlEqualTo("/users/3"))
+                .inScenario("userNotFound")
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "text/html")
+                        .withStatus(400)
+                        .withBody("404 Error")
+                )
+        );
+
     }
 
     @Test
+    @DisplayName("Get All Users List")
     public void getAllUsersTest()
     {
         given()
@@ -44,8 +63,32 @@ public class WireMockApiTests
                     .statusCode(200);
     }
 
-    @AfterEach
-    void resetMock(){
+    @Test
+    @DisplayName("Get First User")
+    public void getFirstUserTest()
+    {
+        given()
+                .when()
+                .get("http://localhost:8080/users/1")
+                .then()
+                .assertThat()
+                .statusCode(200);
+    }
+
+    @Test
+    @DisplayName("400 Bad Request - User Not Found")
+    public void userNotFoundTest()
+    {
+        given()
+                .when()
+                .get("http://localhost:8080/users/3")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @AfterAll
+    void tearDown(){
         wireMockServer.resetAll();
         wireMockServer.stop();
     }
