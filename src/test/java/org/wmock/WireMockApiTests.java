@@ -49,6 +49,15 @@ public class WireMockApiTests
                 )
         );
 
+        stubFor(get(urlEqualTo("/users/4"))
+                .inScenario("internalServerError")
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(500)
+                        .withBody("500 - Internal Server Error")
+                )
+        );              
+
     }
 
     @Test
@@ -56,11 +65,11 @@ public class WireMockApiTests
     public void getAllUsersTest()
     {
         given()
-                .when()
-                    .get("http://localhost:8080/users/all")
-                .then()
-                    .assertThat()
-                    .statusCode(200);
+        .when()
+                .get("http://localhost:8080/users/all")
+        .then()
+                .assertThat()
+                .statusCode(200);
     }
 
     @Test
@@ -68,9 +77,9 @@ public class WireMockApiTests
     public void getFirstUserTest()
     {
         given()
-                .when()
+        .when()
                 .get("http://localhost:8080/users/1")
-                .then()
+        .then()
                 .assertThat()
                 .statusCode(200);
     }
@@ -80,11 +89,22 @@ public class WireMockApiTests
     public void userNotFoundTest()
     {
         given()
-                .when()
+        .when()
                 .get("http://localhost:8080/users/3")
-                .then()
+        .then()
                 .assertThat()
                 .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("500 Internal Server Error")
+    public void internalServerErrorTest() {
+        given()
+        .when()
+                .get("http://localhost:8080/users/4")
+        .then()
+                .assertThat()
+                .statusCode(500);
     }
 
     @AfterAll
