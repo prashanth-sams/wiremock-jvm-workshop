@@ -1,26 +1,26 @@
-package org.wmock;
+package org.wmock.port;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import static io.restassured.RestAssured.*;
-
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.jupiter.api.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static io.restassured.RestAssured.given;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class WireMockApiTests
+public class WMDynamicPortApiTests
 {
     WireMockServer wireMockServer;
 
     @BeforeAll
     void initWireMock(){
-        wireMockServer = new WireMockServer(8080);
+        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
         wireMockServer.start();
         initStub();
     }
 
     private void initStub() {
-        configureFor("localhost", 8080);
+        configureFor("localhost", wireMockServer.port());
 
         stubFor(get(urlEqualTo("/users/all"))
                 .inScenario("getAllUsers")
@@ -66,7 +66,7 @@ public class WireMockApiTests
     {
         given()
         .when()
-                .get("http://localhost:8080/users/all")
+                .get("http://localhost:"+wireMockServer.port()+"/users/all")
         .then()
                 .assertThat()
                 .statusCode(200);
@@ -78,7 +78,7 @@ public class WireMockApiTests
     {
         given()
         .when()
-                .get("http://localhost:8080/users/1")
+                .get("http://localhost:"+wireMockServer.port()+"/users/1")
         .then()
                 .assertThat()
                 .statusCode(200);
@@ -90,7 +90,7 @@ public class WireMockApiTests
     {
         given()
         .when()
-                .get("http://localhost:8080/users/3")
+                .get("http://localhost:"+wireMockServer.port()+"/users/3")
         .then()
                 .assertThat()
                 .statusCode(400);
@@ -101,7 +101,7 @@ public class WireMockApiTests
     public void internalServerErrorTest() {
         given()
         .when()
-                .get("http://localhost:8080/users/4")
+                .get("http://localhost:"+wireMockServer.port()+"/users/4")
         .then()
                 .assertThat()
                 .statusCode(500);

@@ -1,2 +1,7 @@
 .idea/
 target/
+.vscode/
+.classpath
+.project
+.settings
+src/Application-mock.properties
