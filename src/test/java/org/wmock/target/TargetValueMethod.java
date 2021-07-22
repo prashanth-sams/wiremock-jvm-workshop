@@ -1,27 +1,38 @@
-package org.wmock.port;
+package org.wmock.target;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import static io.restassured.RestAssured.*;
-
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.jupiter.api.*;
+import org.wmock.tags.TestConfigValue;
+
+import java.lang.reflect.Method;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static io.restassured.RestAssured.given;
 
-@DisplayName("WireMock with Static Port")
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class WMStaticPortApiTests
+public class TargetValueMethod
 {
     WireMockServer wireMockServer;
 
     @BeforeAll
     void initWireMock(){
-        wireMockServer = new WireMockServer(8080);
+        wireMockServer = new WireMockServer(WireMockConfiguration.options().dynamicPort());
         wireMockServer.start();
         initStub();
     }
 
-    private void initStub() {
-        configureFor("localhost", 8080);
+    @TestConfigValue(level = "Level A")
+    public void initStub() {
+        Method[] methods = TargetValueClass.class.getMethods();
+        for (Method m : methods) {
+            if (m.isAnnotationPresent(TestConfigValue.class)) {
+                TestConfigValue at = m.getAnnotation(TestConfigValue.class);
+                System.out.println(at.level());
+            }
+        }
+        configureFor("localhost", wireMockServer.port());
 
         stubFor(get(urlEqualTo("/users/all"))
                 .inScenario("getAllUsers")
@@ -67,7 +78,7 @@ public class WMStaticPortApiTests
     {
         given()
         .when()
-                .get("http://localhost:8080/users/all")
+                .get("http://localhost:"+wireMockServer.port()+"/users/all")
         .then()
                 .assertThat()
                 .statusCode(200);
@@ -79,7 +90,7 @@ public class WMStaticPortApiTests
     {
         given()
         .when()
-                .get("http://localhost:8080/users/1")
+                .get("http://localhost:"+wireMockServer.port()+"/users/1")
         .then()
                 .assertThat()
                 .statusCode(200);
@@ -91,7 +102,7 @@ public class WMStaticPortApiTests
     {
         given()
         .when()
-                .get("http://localhost:8080/users/3")
+                .get("http://localhost:"+wireMockServer.port()+"/users/3")
         .then()
                 .assertThat()
                 .statusCode(400);
@@ -102,7 +113,7 @@ public class WMStaticPortApiTests
     public void internalServerErrorTest() {
         given()
         .when()
-                .get("http://localhost:8080/users/4")
+                .get("http://localhost:"+wireMockServer.port()+"/users/4")
         .then()
                 .assertThat()
                 .statusCode(500);

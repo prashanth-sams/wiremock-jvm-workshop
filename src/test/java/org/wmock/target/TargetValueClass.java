@@ -1,16 +1,16 @@
-package org.wmock.fromtag;
+package org.wmock.target;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.jupiter.api.*;
-import org.wmock.tags.WMApiTestConfig;
+import org.wmock.tags.TestConfigEmpty;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@WMApiTestConfig(level = "")
-public class WMFromTagApiTests
+@TestConfigEmpty
+public class TargetValueClass
 {
     WireMockServer wireMockServer;
 

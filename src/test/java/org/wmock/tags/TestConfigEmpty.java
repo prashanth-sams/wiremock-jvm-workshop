@@ -6,11 +6,9 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.lang.annotation.*;
 
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@DisplayName("From Tag")
+@DisplayName("From Tag1")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public @interface WMApiTestConfig {
-    String level();
+public @interface TestConfigEmpty {
 }
