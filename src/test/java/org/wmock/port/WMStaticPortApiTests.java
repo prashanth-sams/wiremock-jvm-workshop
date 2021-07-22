@@ -7,12 +7,11 @@ import org.junit.jupiter.api.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
+@DisplayName("WireMock with Static Port")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class WMStaticPortApiTests
 {
     WireMockServer wireMockServer;
-
-//    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8089).httpsPort(8443));
 
     @BeforeAll
     void initWireMock(){

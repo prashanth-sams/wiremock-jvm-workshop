@@ -1,26 +1,27 @@
-package org.wmock.port;
+package org.wmock.fromtag;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.jupiter.api.*;
+import org.wmock.tags.WMApiTestConfig;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
-@DisplayName("WireMock with Dynamic Port")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class WMDynamicPortApiTests
+@WMApiTestConfig(level = "")
+public class WMFromTagApiTests
 {
     WireMockServer wireMockServer;
 
     @BeforeAll
     void initWireMock(){
-        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
+        wireMockServer = new WireMockServer(WireMockConfiguration.options().dynamicPort());
         wireMockServer.start();
         initStub();
     }
 
-    private void initStub() {
+    public void initStub() {
         configureFor("localhost", wireMockServer.port());
 
         stubFor(get(urlEqualTo("/users/all"))
