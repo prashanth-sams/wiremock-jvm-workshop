@@ -8,7 +8,6 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 @DisplayName("From Tag2")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public @interface TestConfigValue {

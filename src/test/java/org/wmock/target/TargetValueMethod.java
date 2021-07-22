@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
+
+@DisplayName("From Tag3")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TargetValueMethod
 {
