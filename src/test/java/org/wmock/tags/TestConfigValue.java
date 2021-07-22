@@ -12,5 +12,5 @@ import java.lang.annotation.*;
 @DisplayName("From Tag2")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public @interface TestConfigValue {
-    String level();
+    String level() default "Level B";
 }

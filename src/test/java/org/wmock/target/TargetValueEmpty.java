@@ -3,14 +3,14 @@ package org.wmock.target;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.jupiter.api.*;
-import org.wmock.tags.TestConfigValue;
+import org.wmock.tags.TestConfigEmpty;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestConfigValue(level = "level A")
-public class TargetValueClass
+@TestConfigEmpty
+public class TargetValueEmpty
 {
     WireMockServer wireMockServer;
 
@@ -32,6 +32,7 @@ public class TargetValueClass
                         .withBody("{ \"id\": 1, \"name\": \"Prashanth Sams\", \"gender\": \"male\", \"age\": 31 }, { \"id\": 2, \"name\": \"John Smith\", \"gender\": \"male\", \"age\": 40 }")
                 )
         );
+
     }
 
     @Test

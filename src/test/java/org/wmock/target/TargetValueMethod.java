@@ -10,7 +10,6 @@ import java.lang.reflect.Method;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TargetValueMethod
 {
@@ -25,7 +24,7 @@ public class TargetValueMethod
 
     @TestConfigValue(level = "Level A")
     public void initStub() {
-        Method[] methods = TargetValueClass.class.getMethods();
+        Method[] methods = TargetValueMethod.class.getMethods();
         for (Method m : methods) {
             if (m.isAnnotationPresent(TestConfigValue.class)) {
                 TestConfigValue at = m.getAnnotation(TestConfigValue.class);
@@ -42,34 +41,6 @@ public class TargetValueMethod
                         .withBody("{ \"id\": 1, \"name\": \"Prashanth Sams\", \"gender\": \"male\", \"age\": 31 }, { \"id\": 2, \"name\": \"John Smith\", \"gender\": \"male\", \"age\": 40 }")
                 )
         );
-
-        stubFor(get(urlEqualTo("/users/1"))
-                .inScenario("getFirstUser")
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withStatus(200)
-                        .withBody("{ \"id\": 1, \"name\": \"Prashanth Sams\", \"gender\": \"male\", \"age\": 31 }")
-                )
-        );
-
-        stubFor(get(urlEqualTo("/users/3"))
-                .inScenario("userNotFound")
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "text/html")
-                        .withStatus(400)
-                        .withBody("404 Error")
-                )
-        );
-
-        stubFor(get(urlEqualTo("/users/4"))
-                .inScenario("internalServerError")
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withStatus(500)
-                        .withBody("500 - Internal Server Error")
-                )
-        );              
-
     }
 
     @Test
@@ -82,41 +53,6 @@ public class TargetValueMethod
         .then()
                 .assertThat()
                 .statusCode(200);
-    }
-
-    @Test
-    @DisplayName("Get First User")
-    public void getFirstUserTest()
-    {
-        given()
-        .when()
-                .get("http://localhost:"+wireMockServer.port()+"/users/1")
-        .then()
-                .assertThat()
-                .statusCode(200);
-    }
-
-    @Test
-    @DisplayName("400 Bad Request - User Not Found")
-    public void userNotFoundTest()
-    {
-        given()
-        .when()
-                .get("http://localhost:"+wireMockServer.port()+"/users/3")
-        .then()
-                .assertThat()
-                .statusCode(400);
-    }
-
-    @Test
-    @DisplayName("500 Internal Server Error")
-    public void internalServerErrorTest() {
-        given()
-        .when()
-                .get("http://localhost:"+wireMockServer.port()+"/users/4")
-        .then()
-                .assertThat()
-                .statusCode(500);
     }
 
     @AfterAll
